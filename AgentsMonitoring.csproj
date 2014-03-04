@@ -39,7 +39,19 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AgentsMonitoring.cs" />
+    <Compile Include="APIWrapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Web-UI\agent_monitoring.html" />
+    <Content Include="Web-UI\agent_monitoring_candlesticks.html" />
+    <Content Include="Web-UI\agent_monitoring_gauges.html" />
+    <Content Include="Web-UI\agent_monitoring_line-charts.html" />
+    <Content Include="Web-UI\agent_trending_data.js" />
+    <Content Include="Web-UI\inventory_monitoring.html" />
+    <Content Include="Web-UI\inventory_monitoring_candlesticks.html" />
+    <Content Include="Web-UI\inventory_monitoring_gauges.html" />
+    <Content Include="Web-UI\inventory_monitoring_line-charts.html" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
