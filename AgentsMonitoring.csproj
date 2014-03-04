@@ -28,6 +28,11 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Altiris.Common" />
+    <Reference Include="Altiris.Database" />
+    <Reference Include="Altiris.DotNetLib" />
+    <Reference Include="Altiris.NS" />
+    <Reference Include="Altiris.NS.StandardItems" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
