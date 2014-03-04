@@ -1,0 +1,29 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+	<script type="text/javascript" src="agent_trending_data.js"></script>
+	<script type="text/javascript">
+		google.load('visualization', '1', {packages: ['corechart']});
+		function drawVisualization() {
+			if (typeof candlestick_all_table !== 'undefined') {
+				var all_data = google.visualization.arrayToDataTable(candlestick_all_table, true);
+				var all_chart = new google.visualization.CandlestickChart(document.getElementById('allchart_div'));
+				all_chart.draw(all_data, candlestick_all_options);
+			}
+			if (typeof candlestick_out_table !== 'undefined') {
+				var out_data = google.visualization.arrayToDataTable(candlestick_out_table, true);
+				var out_chart = new google.visualization.CandlestickChart(document.getElementById('outchart_div'));
+				out_chart.draw(out_data, candlestick_out_options);
+			}
+		}
+		google.setOnLoadCallback(drawVisualization);
+	</script>
+</head>
+<body>
+	<table>
+	<tr>
+	<td><div id="allchart_div" style="width: 500px; height: 220px;"></div></td>
+	<td><div id="outchart_div" style="width: 500px; height: 220px;"></div></td>
+	</tr>
+</body>
+</html>

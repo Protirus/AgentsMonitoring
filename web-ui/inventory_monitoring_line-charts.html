@@ -1,0 +1,53 @@
+<html>
+<head>
+	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+	<script type="text/javascript" src="agent_trending_data.js"></script>
+	<script type="text/javascript">
+		google.load("visualization", "1", {packages:["corechart"]});
+		google.setOnLoadCallback(drawChart);
+		function drawChart() {
+			if (typeof bi_table !== 'undefined') {
+				var bi_data = google.visualization.arrayToDataTable(bi_table);
+				var bi_chart = new google.visualization.LineChart(document.getElementById('basinv_div'));
+				bi_chart.draw(bi_data, bi_options);
+			}
+			
+			if (typeof bi_table !== 'undefined') {
+				var hw_data = google.visualization.arrayToDataTable(hw_table);
+				var hw_chart = new google.visualization.LineChart(document.getElementById('hwinv_div'));
+				hw_chart.draw(hw_data, hw_options);
+			}
+			
+			if (typeof bi_table !== 'undefined') {
+				var os_data = google.visualization.arrayToDataTable(os_table);
+				var os_chart = new google.visualization.LineChart(document.getElementById('osinv_div'));
+				os_chart.draw(os_data, os_options);
+			}
+
+			if (typeof bi_table !== 'undefined') {
+				var sw_data = google.visualization.arrayToDataTable(sw_table);
+				var sw_chart = new google.visualization.LineChart(document.getElementById('swinv_div'));
+				sw_chart.draw(sw_data, sw_options);
+			}
+
+			if (typeof bi_table !== 'undefined') {
+				var ug_data = google.visualization.arrayToDataTable(ug_table);
+				var ug_chart = new google.visualization.LineChart(document.getElementById('uginv_div'));
+				ug_chart.draw(ug_data, ug_options);
+			}
+		}
+	</script>
+</head>
+<body>
+	<table>
+	<tr>
+	<td><div id="basinv_div" style="width: 500px; height: 350px;"></div></td>
+	<td><div id="hwinv_div" style="width: 500px; height: 350px;"></div></td>
+	</tr><tr>
+	<td><div id="osinv_div" style="width: 500px; height: 350px;"></div>
+	<td><div id="swinv_div" style="width: 500px; height: 350px;"></div></td>
+	</tr><tr>
+	<td><div id="uginv_div" style="width: 500px; height: 350px;"></div></td>
+	</tr>
+</body>
+</html>
