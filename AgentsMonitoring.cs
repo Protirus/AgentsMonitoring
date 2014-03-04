@@ -10,6 +10,18 @@ namespace Symantec.CWoC {
         static void Main(string[] args) {
             // This tool generates the javascript as seen in sample Web-UI/agent_trending_data.js
             // This requires quite a few SQL queries, so I'll probably start with this.
+
+            DataHandler h = new DataHandler();
+            JSformatter f = new JSformatter();
+
+            foreach (DataRow r in h.GetAgent_List().Rows) {
+                Console.WriteLine(f.GetJSONFromTable(h.GetAgent_Line_Stats(r[0].ToString()), f.GetAgentTableName((string)r[0]), f.agent_thead));
+            }
+
+            foreach (DataRow r in h.GetInventory_List().Rows) {
+                Console.WriteLine(f.GetJSONFromTable(h.GetInventory_Line_Stats((string) r[0]), f.GetInvTableName((string)r[0]), f.inv_thead));
+            }
+            Console.ReadLine();
         }
     }
 
@@ -107,33 +119,66 @@ select a1.[inventory type], MIN(a1.[Not updated in last 4 weeks]) as 'Lowest', M
             return DatabaseAPI.GetTable(sql);
         }
         public DataTable GetInventory_Line_Stats(string agent_name) {
-            string sql = "select cast(cast(_Exec_time as date) as varchar(255)) as 'Date', [Computer #], [Updated in last 4 weeks], [Not updated in last 4 weeks]  from TREND_InventoryStatus where [inventory type] = '{0}'";
+            string sql = "select cast(cast(_Exec_time as date) as varchar(255)) as 'Date', [Computers], [Updated in last 4 weeks], [Not updated in last 4 weeks]  from TREND_InventoryStatus where [inventory type] = '{0}'";
             sql = string.Format(sql, agent_name);
             return DatabaseAPI.GetTable(sql);
         }
     }
     // Output data is generated thru this class
     class JSformatter {
-        public string GetJSONFromTable(DataTable t, string entry, string head, int column) {
+        public readonly string inv_thead = "['Date', 'Agent #', 'Updated', 'Outdated']";
+        public readonly string agent_thead = "['Date', 'Agent #', 'OK', 'NOK']";
+        public string GetJSONFromTable(DataTable t, string entry, string head) {
             StringBuilder b = new StringBuilder();
 
             b.AppendLine("var " + entry + " = [");
-            b.AppendFormat("\t{0},", head);
+            b.AppendFormat("\t{0},\n", head);
 
             foreach (DataRow r in t.Rows) {
                 b.Append("\t[");
-                for (int i = 0; i < column; i++) {
-                    b.AppendFormat("'{0}', ", r[i].ToString().Replace(',', '.'));
+                for (int i = 0; i < r.ItemArray.Length; i++) {
+                    if (i == 0) {
+                        b.AppendFormat("'{0}', ", r[i].ToString().Replace(',', '.'));
+                    } else {
+                        b.AppendFormat("{0}, ", r[i].ToString().Replace(',', '.'));
+                    }
                 }
+                b.Remove(b.Length - 2, 1);
                 b.Append("],\n");
             }
             // Remove the last comma we inserted
-            b.Remove(b.Length - 3, 1);
+            b.Remove(b.Length - 2, 1);
             b.AppendLine("];");
 
             return b.ToString();
         }
-
-
+        public string GetAgentTableName(string agent_name) {
+            switch (agent_name) {
+                case "Altiris Agent":
+                    return "core_agent";
+                case "Altiris Software Update Agent":
+                    return "sua_table";
+                case "Altiris Inventory Agent":
+                    return "inv_table";
+                case "Software Management Solution Agent":
+                    return "swm_table";
+            }
+            return "unk";
+        }
+        public string GetInvTableName(string agent_name) {
+            switch (agent_name.ToLower()) {
+                case "basic inventory":
+                    return "bi_table";
+                case "hw inventory":
+                    return "hw_table";
+                case "os inventory":
+                    return "os_table";
+                case "sw inventory":
+                    return "sw_table";
+                case "ug inventory":
+                    return "ug_table";
+            }
+            return "unk";
+        }
     }
 }
