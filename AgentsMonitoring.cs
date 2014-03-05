@@ -59,7 +59,6 @@ var ug_options = { title: 'User Group Inventory' };
             foreach (DataRow r in h.GetInventory_List().Rows) {
                 Console.WriteLine(f.GetJSONFromTable(h.GetInventory_Line_Stats((string) r[0]), f.GetInvTableName((string)r[0]), f.inv_thead));
             }
-            Console.ReadLine();
         }
     }
 
@@ -76,7 +75,7 @@ var ug_options = { title: 'User Group Inventory' };
 
         }
         public DataTable GetAgent_Gauge_Stats() {
-            string sql = "select [Agent Name], [% up-to-date] from TREND_AgentVersions where _Exec_id = (select MAX(_exec_id) from TREND_AgentVersions) order by [agent name]";
+            string sql = "select [Agent Name], cast([% up-to-date] as varchar(255)) from TREND_AgentVersions where _Exec_id = (select MAX(_exec_id) from TREND_AgentVersions) order by [agent name]";
             return DatabaseAPI.GetTable(sql);
         }
         public DataTable GetAgent_CandlestickALL_Stats() {
@@ -125,7 +124,7 @@ select a1.[Agent Name], MIN(a1.[Agents to upgrade]) as 'Lowest', MAX(a1.[agents 
             return DatabaseAPI.GetTable(sql);
         }
         public DataTable GetInventory_Gauge_Stats() {
-            string sql = "select[inventory type], [% up-to-date] from TREND_InventoryStatus where _Exec_id = (select MAX(_exec_id) from TREND_InventoryStatus) order by [inventory type]";
+            string sql = "select[inventory type], cast([% up-to-date] as varchar(255)) from TREND_InventoryStatus where _Exec_id = (select MAX(_exec_id) from TREND_InventoryStatus) order by [inventory type]";
             return DatabaseAPI.GetTable(sql);
         }
         public DataTable GetInventory_CandleALL_Stats() {
