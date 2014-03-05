@@ -25,7 +25,13 @@ namespace Symantec.CWoC {
             Console.WriteLine();
 
             // Continue with the inventory options - all static for now.
-            Console.WriteLine(f.InvOptions);
+            Console.WriteLine(@"
+var bi_options = { title: 'Basic Inventory (Core)' };
+var hw_options = { title: 'Hardware Inventory' };
+var os_options = { title: 'OS Inventory' };
+var sw_options = { title: 'Software Inventory' };
+var ug_options = { title: 'User Group Inventory' };
+");
 
             Console.WriteLine("var candlestick_all_options = {legend:'none', title:'Computers sending Inventory'};");
             Console.WriteLine("var candlestick_out_options = {legend:'none', title: 'Inventory data older than 4 weeks'};");
@@ -34,10 +40,15 @@ namespace Symantec.CWoC {
             // Generate the gauge tables
             string agent_gauge = f.GetJSONFromTable(h.GetAgent_Gauge_Stats(), "agent_gauge_table", f.gauge_thead);
             Console.WriteLine(f.ConvertGauges(agent_gauge));
-            // Generate the candlestick tables
 
             string inv_gauge = f.GetJSONFromTable(h.GetInventory_Gauge_Stats(), "inv_gauge_table", f.gauge_thead);
             Console.WriteLine(f.ConvertGauges(inv_gauge));
+
+            // Generate the candlestick tables
+            Console.WriteLine(f.GetJSONFromTable(h.GetAgent_CandlestickALL_Stats(), "candlestick_agent_table", ""));
+            Console.WriteLine(f.GetJSONFromTable(h.GetAgent_CandlestickOutdated_Stats(), "candlestick_agent_outdated_table", ""));
+            Console.WriteLine(f.GetJSONFromTable(h.GetInventory_CandleALL_Stats(), "candlestick_all_table", ""));
+            Console.WriteLine(f.GetJSONFromTable(h.GetInventory_CandleOutdated_Stats(), "candlestick_out_table", ""));
 
             // Generate the tables used in the agent line charts
             foreach (DataRow r in agent_list.Rows) {
@@ -68,13 +79,13 @@ namespace Symantec.CWoC {
             string sql = "select [Agent Name], [% up-to-date] from TREND_AgentVersions where _Exec_id = (select MAX(_exec_id) from TREND_AgentVersions) order by [agent name]";
             return DatabaseAPI.GetTable(sql);
         }
-        public DataTable GetAgent_CandlestickALL_Stats(string stat_type) {
+        public DataTable GetAgent_CandlestickALL_Stats() {
             string sql = @"
 select a1.[Agent Name], a1.Lowest /* LOW */, a3.[Agents Installed] as 'Previous' /* OPENING */, a2.[Agents Installed] as 'Current' /* CLOSING */, a1.Highest /* MAX */
   from (
 select a1.[Agent Name], MIN(a1.[Agents installed]) as 'Lowest', MAX(a1.[agents installed]) as 'Highest'
   from TREND_AgentVersions a1
- group by [agent name], [Agent Highest Version]
+ group by [agent name]
 		) a1
   join TREND_AgentVersions a2
     on a1.[Agent Name] = a2.[Agent Name]
@@ -91,7 +102,7 @@ select a1.[Agent Name], a1.Lowest /* LOW */, a3.[Agents to upgrade] as 'Previous
   from (
 select a1.[Agent Name], MIN(a1.[Agents to upgrade]) as 'Lowest', MAX(a1.[agents to upgrade]) as 'Highest'
   from TREND_AgentVersions a1
- group by [agent name], [Agent Highest Version]
+ group by [agent name]
 		) a1
   join TREND_AgentVersions a2
     on a1.[Agent Name] = a2.[Agent Name]
@@ -165,7 +176,9 @@ select a1.[inventory type], MIN(a1.[Not updated in last 4 weeks]) as 'Lowest', M
             StringBuilder b = new StringBuilder();
 
             b.AppendLine("var " + entry + " = [");
-            b.AppendFormat("\t{0},\n", head);
+            if (head != "") {
+                b.AppendFormat("\t{0},\n", head);
+            }
 
             foreach (DataRow r in t.Rows) {
                 b.Append("\t[");
@@ -213,13 +226,6 @@ select a1.[inventory type], MIN(a1.[Not updated in last 4 weeks]) as 'Lowest', M
             }
             return "unk";
         }
-        public readonly string InvOptions = @"
-var bi_options = { title: 'Basic Inventory (Core)' };
-var hw_options = { title: 'Hardware Inventory' };
-var os_options = { title: 'OS Inventory' };
-var sw_options = { title: 'Software Inventory' };
-var ug_options = { title: 'User Group Inventory' };
-";
         public string ConvertGauges(string gauge) {
             StringBuilder b = new StringBuilder(gauge);
             //Handle Agent string
