@@ -14,10 +14,37 @@ namespace Symantec.CWoC {
             DataHandler h = new DataHandler();
             JSformatter f = new JSformatter();
 
-            foreach (DataRow r in h.GetAgent_List().Rows) {
+            // Start with the agent options (dynamic)
+            DataTable agent_list = h.GetAgent_List();
+            foreach (DataRow r in agent_list.Rows) {
+                string agent = (string)r[0];
+                string version = h.GetAgentVersion(agent);
+                string var_name = f.GetAgentTableName(agent).Replace("_table", "_options");
+                Console.WriteLine("var {0} = {{title: '{1} ({2})'}};", var_name, agent, version);
+            }
+            Console.WriteLine();
+
+            // Continue with the inventory options - all static for now.
+            Console.WriteLine(f.InvOptions);
+
+            Console.WriteLine("var candlestick_all_options = {legend:'none', title:'Computers sending Inventory'};");
+            Console.WriteLine("var candlestick_out_options = {legend:'none', title: 'Inventory data older than 4 weeks'};");
+            Console.WriteLine();
+
+            // Generate the gauge tables
+            string agent_gauge = f.GetJSONFromTable(h.GetAgent_Gauge_Stats(), "agent_gauge_table", f.gauge_thead);
+            Console.WriteLine(f.ConvertGauges(agent_gauge));
+            // Generate the candlestick tables
+
+            string inv_gauge = f.GetJSONFromTable(h.GetInventory_Gauge_Stats(), "inv_gauge_table", f.gauge_thead);
+            Console.WriteLine(f.ConvertGauges(inv_gauge));
+
+            // Generate the tables used in the agent line charts
+            foreach (DataRow r in agent_list.Rows) {
                 Console.WriteLine(f.GetJSONFromTable(h.GetAgent_Line_Stats(r[0].ToString()), f.GetAgentTableName((string)r[0]), f.agent_thead));
             }
 
+            // Generate the tables used in the inventory line charts
             foreach (DataRow r in h.GetInventory_List().Rows) {
                 Console.WriteLine(f.GetJSONFromTable(h.GetInventory_Line_Stats((string) r[0]), f.GetInvTableName((string)r[0]), f.inv_thead));
             }
@@ -32,8 +59,13 @@ namespace Symantec.CWoC {
             string sql = "select distinct([agent name]) from TREND_AgentVersions";
             return DatabaseAPI.GetTable(sql);
         }
-        public DataTable GetAgent_Gauge_Stats(string stat_type) {
-            string sql = "select [Agent Name], [Agent Highest Version], _exec_id, [% up-to-date] from TREND_AgentVersions where _Exec_id = (select MAX(_exec_id) from TREND_AgentVersions) order by [agent name]";
+        public string GetAgentVersion(string agent_name) {
+            string sql = String.Format("select max([Agent Highest Version]) from TREND_AgentVersions where [Agent name] = '{0}'", agent_name);
+            return (string) DatabaseAPI.GetTable(sql).Rows[0][0];
+
+        }
+        public DataTable GetAgent_Gauge_Stats() {
+            string sql = "select [Agent Name], [% up-to-date] from TREND_AgentVersions where _Exec_id = (select MAX(_exec_id) from TREND_AgentVersions) order by [agent name]";
             return DatabaseAPI.GetTable(sql);
         }
         public DataTable GetAgent_CandlestickALL_Stats(string stat_type) {
@@ -119,7 +151,7 @@ select a1.[inventory type], MIN(a1.[Not updated in last 4 weeks]) as 'Lowest', M
             return DatabaseAPI.GetTable(sql);
         }
         public DataTable GetInventory_Line_Stats(string agent_name) {
-            string sql = "select cast(cast(_Exec_time as date) as varchar(255)) as 'Date', [Computers], [Updated in last 4 weeks], [Not updated in last 4 weeks]  from TREND_InventoryStatus where [inventory type] = '{0}'";
+            string sql = "select cast(cast(_Exec_time as date) as varchar(255)) as 'Date', [Computer #], [Updated in last 4 weeks], [Not updated in last 4 weeks]  from TREND_InventoryStatus where [inventory type] = '{0}'";
             sql = string.Format(sql, agent_name);
             return DatabaseAPI.GetTable(sql);
         }
@@ -128,6 +160,7 @@ select a1.[inventory type], MIN(a1.[Not updated in last 4 weeks]) as 'Lowest', M
     class JSformatter {
         public readonly string inv_thead = "['Date', 'Agent #', 'Updated', 'Outdated']";
         public readonly string agent_thead = "['Date', 'Agent #', 'OK', 'NOK']";
+        public readonly string gauge_thead = "['Label', 'Value']";
         public string GetJSONFromTable(DataTable t, string entry, string head) {
             StringBuilder b = new StringBuilder();
 
@@ -155,7 +188,7 @@ select a1.[inventory type], MIN(a1.[Not updated in last 4 weeks]) as 'Lowest', M
         public string GetAgentTableName(string agent_name) {
             switch (agent_name) {
                 case "Altiris Agent":
-                    return "core_agent";
+                    return "core_table";
                 case "Altiris Software Update Agent":
                     return "sua_table";
                 case "Altiris Inventory Agent":
@@ -179,6 +212,28 @@ select a1.[inventory type], MIN(a1.[Not updated in last 4 weeks]) as 'Lowest', M
                     return "ug_table";
             }
             return "unk";
+        }
+        public readonly string InvOptions = @"
+var bi_options = { title: 'Basic Inventory (Core)' };
+var hw_options = { title: 'Hardware Inventory' };
+var os_options = { title: 'OS Inventory' };
+var sw_options = { title: 'Software Inventory' };
+var ug_options = { title: 'User Group Inventory' };
+";
+        public string ConvertGauges(string gauge) {
+            StringBuilder b = new StringBuilder(gauge);
+            //Handle Agent string
+            b.Replace("Altiris Agent", "Core");
+            b.Replace("Altiris Software Update Agent", "Patch");
+            b.Replace("Altiris Inventory Agent", "Inv.");
+            b.Replace("Software Management Solution Agent", "Soft.");
+
+            b.Replace("Basic Inventory", "Core");
+            b.Replace("HW Inventory", "HW");
+            b.Replace("OS Inventory", "OS");
+            b.Replace("SW Inventory", "SW");
+            b.Replace("UG Inventory", "UG");
+            return b.ToString();
         }
     }
 }
