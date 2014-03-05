@@ -3,7 +3,6 @@ var core_options = { title: 'Altiris Agent (7.1.15451.8460)' };
 var inv_options = { title: 'Inventory Agent (7.1.7875)' };
 var sua_options = { title: 'Software Update Agent (7.1.7875)' };
 var swm_options = { title: 'Software Management Agent (7.1.7858)' };
-var swv_options = { title: 'Software Virtualization Agent (7.5.522)' };
 
 var bi_options = { title: 'Basic Inventory (Core)' };
 var hw_options = { title: 'Hardware Inventory' };
