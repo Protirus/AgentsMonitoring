@@ -8,13 +8,13 @@
 			if (typeof candlestick_agent_table !== 'undefined') {
 				var all_data = google.visualization.arrayToDataTable(candlestick_agent_table, true);
 				var all_chart = new google.visualization.CandlestickChart(document.getElementById('allchart_div'));
-				all_chart.draw(all_data, {legend:'none', title:'Agents installed'});
+				all_chart.draw(all_data, candlestick_allagents_options);
 			}
 			
 			if (typeof candlestick_agent_outdated_table !== 'undefined') {
 				var out_data = google.visualization.arrayToDataTable(candlestick_agent_outdated_table, true);
 				var out_chart = new google.visualization.CandlestickChart(document.getElementById('outchart_div'));
-				out_chart.draw(out_data, {legend:'none', title: 'Agents to upgrade'});
+				out_chart.draw(out_data, candlestick_outagents_options);
 			}
 		}
 		google.setOnLoadCallback(drawVisualization);

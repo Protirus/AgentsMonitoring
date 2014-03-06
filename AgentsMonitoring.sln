@@ -2,6 +2,16 @@
 Microsoft Visual Studio Solution File, Format Version 9.00
 # Visual Studio 2005
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AgentsMonitoring", "AgentsMonitoring.csproj", "{6BDA3A45-35A6-428A-A587-DDB1B2346208}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InventoryMonitoring", "InventoryMonitoring.csproj", "{BC8192F9-D31F-425E-B553-CE012D3B5DBF}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,6 +23,10 @@ Global
 		{6BDA3A45-35A6-428A-A587-DDB1B2346208}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6BDA3A45-35A6-428A-A587-DDB1B2346208}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6BDA3A45-35A6-428A-A587-DDB1B2346208}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BC8192F9-D31F-425E-B553-CE012D3B5DBF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BC8192F9-D31F-425E-B553-CE012D3B5DBF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BC8192F9-D31F-425E-B553-CE012D3B5DBF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BC8192F9-D31F-425E-B553-CE012D3B5DBF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
