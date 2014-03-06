@@ -7,9 +7,22 @@ using System.Text;
 
 namespace Symantec.CWoC {
     class InventoryMonitoring {
-        static void Main(string[] args) {
+        static int Main(string[] args) {
             // This tool generates the javascript as seen in sample Web-UI/agent_trending_data.js
             // This requires quite a few SQL queries, so I'll probably start with this.
+
+            if (args.Length > 0) {
+                string arg = args[0].ToLower();
+                if (arg == "-h" || arg == "--help") {
+                    Console.WriteLine(help_msg);
+                    return 1;
+                } else if (arg == "-v" || arg == "--version") {
+                    Console.WriteLine(version);
+                    return 1;
+                } else {
+                    return -1;
+                }
+            }
 
             DataHandler h = new DataHandler();
             JSformatter f = new JSformatter();
@@ -38,7 +51,19 @@ var ug_options = { title: 'User Group Inventory' };
             foreach (DataRow r in h.GetInventory_List().Rows) {
                 Console.WriteLine(f.GetJSONFromTable(h.GetInventory_Line_Stats((string)r[0]), f.GetInvTableName((string)r[0]), f.inv_thead));
             }
+
+            return 0;
         }
+        private static readonly string version = "InventoryMonitoring version 1.\n\nBuilt for .Net 2.0, brought to you by {CWoC}.\n";
+        private static readonly string help_msg = @"Usage: InventoryMonitoring  [Parameter]
+
+Parameters:
+    -h, --help              Show this help message
+    -v, --version           Output program version
+
+This program will output to the console (stdout) a Javascript file containing Inventory Monitoring data to be consumed by a web-interface.
+";
+
     }
 
     // All SQL request come thru this class
