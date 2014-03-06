@@ -1,0 +1,21 @@
+<html>
+	<head>
+	<script type='text/javascript' src='https://www.google.com/jsapi'></script>
+	<script type="text/javascript" src="agent_trending_data.js"></script>
+	<script type='text/javascript'>
+	   google.load('visualization', '1', {packages:['gauge']});
+	   google.setOnLoadCallback(drawChart);
+	   function drawChart() {
+		if (typeof inv_gauge_table !== 'undefined') {
+				var gauge_data = google.visualization.arrayToDataTable(inv_gauge_table);
+				var gauge_chart = new google.visualization.Gauge(document.getElementById('gaugechart_div'));
+				var gauge_options = {redFrom: 0, redTo: 75, yellowFrom:75, yellowTo: 95, greenFrom: 95, greenTo: 100, minorTicks: 5};
+				gauge_chart.draw(gauge_data, gauge_options);
+			}
+		}
+	</script>
+</head>
+<body>
+	<div id='gaugechart_div'/>
+</body>
+</html>
