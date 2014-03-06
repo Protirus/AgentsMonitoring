@@ -42,6 +42,13 @@
     <Compile Include="InventoryMonitoring.cs" />
     <Compile Include="InventoryProperties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="Web-UI\inventory\agent_trending_data.js" />
+    <Content Include="Web-UI\inventory\index.html" />
+    <Content Include="Web-UI\inventory\inventory_monitoring_candlesticks.html" />
+    <Content Include="Web-UI\inventory\inventory_monitoring_gauges.html" />
+    <Content Include="Web-UI\inventory\inventory_monitoring_line-charts.html" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
