@@ -40,7 +40,7 @@
   <ItemGroup>
     <Compile Include="AgentsMonitoring.cs" />
     <Compile Include="APIWrapper.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="AgentProperties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Web-UI\agent_monitoring.html" />
