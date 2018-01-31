@@ -36,3 +36,4 @@ set ver1=7.5.3153.0__d516cb311cfb6e4f
 :build
 : Build AgentsMonitoring.exe
 cmd /c %csc% /reference:%gac%\%ans%\%ver1%\%ans%.dll /reference:%gac%\%adb%\%ver1%\%adb%.dll /out:AgentsMonitoring%build%.exe AgentsMonitoring.cs APIWrapper.cs
+cmd /c %csc% /reference:%gac%\%ans%\%ver1%\%ans%.dll /reference:%gac%\%adb%\%ver1%\%adb%.dll /out:InventoryMonitoring-%build%.exe InventoryMonitoring.cs APIWrapper.cs
